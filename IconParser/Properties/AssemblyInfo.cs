@@ -6,9 +6,9 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("IconParser")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("an easy to use utility to parse ICO files and navigate its images")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Malek Altamimi")]
 [assembly: AssemblyProduct("IconParser")]
 [assembly: AssemblyCopyright("Copyright ©  2026")]
 [assembly: AssemblyTrademark("")]

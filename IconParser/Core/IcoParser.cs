@@ -74,6 +74,13 @@ namespace IconParser.Core
         public ushort NumberOfImagesInCurrentIcoFile { get; private set; } = 0;
         private readonly List<Image> _IcoImages = new List<Image>();
         private int _CurrentImageIndex = -1;
+        public int CurrentImageNumber
+        {
+            get
+            {
+                return (_CurrentImageIndex == -1 ? 0 : _CurrentImageIndex) + 1;
+            }
+        }
 
         public IcoParser(string fileName)
         {
@@ -87,6 +94,7 @@ namespace IconParser.Core
             }
             catch
             {
+                this.Dispose();
                 throw new InvalidDataException($"Invalid Ico File: {fileName}");
             }
             finally
@@ -103,6 +111,7 @@ namespace IconParser.Core
             }
             catch
             {
+                this.Dispose();
                 throw new InvalidDataException($"Invalid Ico File stream!");
             }
         }
@@ -142,8 +151,8 @@ namespace IconParser.Core
             {
                 EntryReader = new BinaryReader(new MemoryStream(EntryToParse));
 
-                byte width = EntryReader.ReadByte();  
-                byte height = EntryReader.ReadByte();
+                short width = (width = EntryReader.ReadByte()) == 0 ? (short) 256 : width;  
+                short height = (height = EntryReader.ReadByte()) == 0 ? (short)256 : width;
 
                 EntryReader.BaseStream.Seek(8, SeekOrigin.Begin);
                 uint IcoImageLength = EntryReader.ReadUInt32();
@@ -203,12 +212,9 @@ namespace IconParser.Core
         /// </returns>
         public Image GetNextImage()
         {
-            if (_CurrentImageIndex == _IcoImages.Count) return null;
+            if (_CurrentImageIndex == (_IcoImages.Count - 1)) return null;
 
-            if (_CurrentImageIndex == -1)
-                _CurrentImageIndex = 0;
-
-            return GetImageAt((uint)_CurrentImageIndex++);
+            return GetImageAt((uint)++_CurrentImageIndex);
         }
 
         /// <summary>
@@ -220,12 +226,9 @@ namespace IconParser.Core
         /// </returns>
         public Image GetPreviousImage()
         {
-            if (_CurrentImageIndex == -1) return null;
+            if (_CurrentImageIndex == -1 || _CurrentImageIndex == 0) return null;
 
-            if (_CurrentImageIndex == _IcoImages.Count)
-                _CurrentImageIndex = _IcoImages.Count - 1;
-
-            return GetImageAt((uint)_CurrentImageIndex--);
+            return GetImageAt((uint)--_CurrentImageIndex);
         }
 
         /// <summary>
